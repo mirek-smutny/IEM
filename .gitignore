@@ -1,0 +1,4 @@
+
+*.pyc
+IEM/.env
+IEM/*/*.pyc

@@ -1,0 +1,19 @@
+[Unit]
+
+Description=IEM Application Server
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+TimeoutSec=300
+
+User=pyapp
+Group=apps
+
+ExecStart=/bin/python3 /home/pyapp/dev/IEM/manage.py runserver 192.168.56.13:8000
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
