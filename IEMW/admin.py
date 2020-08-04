@@ -8,7 +8,4 @@ from .models import User
 
 admin.site.register(User, UserAdmin)
 
-#from .models import *
-
-#admin.site.register(Component)
 

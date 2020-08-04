@@ -15,35 +15,6 @@ class User(AbstractUser):
         db_table = "user"
     pass
 
-#class User(models.Model):
-#    login = models.CharField(max_length = 40)
-#    email = models.CharField(max_length = 100)
-#    password = models.CharField(max_length = 200)
-#    create_date = models.DateTimeField('date created')
-#    class Meta:
-#        db_table = "user"
-#
-#class Role(models.Model):
-#    name = models.CharField(max_length = 40)
-#    class Meta:
-#        db_table = "role"
-#
-#class UserRole(models.Model):
-#    user = models.ForeignKey(User, on_delete=models.CASCADE)
-#    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-#    granted_date = models.DateTimeField('date granted')
-#    class Meta:
-#        db_table = "user_role"
-#
-#class RolePrivilege(models.Model):
-#    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-#    component = models.ForeignKey(Component, on_delete=models.CASCADE)
-#    read = models.BooleanField(null=True)
-#    edit = models.BooleanField(null=True)
-#    delete = models.BooleanField(null=True)
-#    class Meta:
-#        db_table = "role_privilege"
-
 # Target Management
 
 class Group(models.Model):
@@ -52,7 +23,7 @@ class Group(models.Model):
         db_table = "group"
 
 class TargetType(models.Model):
-    type = models.CharField(max_length = 40)
+    name = models.CharField(max_length = 40)
     class Meta:
         db_table = "target_type"
 
@@ -79,7 +50,7 @@ class TargetCredential(models.Model):
         db_table = "target_credential"
         
 class TargetProperty(models.Model):
-    target = models.ForeignKey(Target, on_delete=models.CASCADE, db_column="taid")
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
     name = models.CharField(max_length = 40)
     value = models.CharField(max_length = 200)
     class Meta:
@@ -94,8 +65,8 @@ class BlackoutReason(models.Model):
 
 class Blackout(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    start_date = models.DateTimeField('start date')
-    end_date = models.DateTimeField('end date')
+    start_date = models.DateTimeField('start date', null=True)
+    end_date = models.DateTimeField('end date', null=True)
     blackout_reason = models.ForeignKey(BlackoutReason, on_delete=models.CASCADE)
     class Meta:
         db_table = "blackout"
@@ -108,10 +79,11 @@ class MetricCategory(models.Model):
         db_table = "metric_category"
 
 class Command(models.Model):
+    name = models.CharField(max_length = 60)
     path = models.CharField(max_length = 60)
     command = models.CharField(max_length = 60)
-    parameters = models.CharField(max_length = 60)
-    env = models.CharField(max_length = 300)
+    parameters = models.CharField(max_length = 60, null=True)
+    env = models.CharField(max_length = 300, null=True)
     class Meta:
         db_table = "command"
 
@@ -132,7 +104,7 @@ class Metric(models.Model):
 class TargetMetricCollect(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
-    value = models.CharField(max_length = 40, db_column="value")
+    value = models.CharField(max_length = 40)
     collect_date = models.DateTimeField('collect date')
     class Meta:
         db_table = "target_metric_collect"
@@ -149,6 +121,12 @@ class TemplateMetric(models.Model):
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
     class Meta:
         db_table = "template_metric"
+
+class TargetTemplate(models.Model):
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, on_delete=models.CASCADE)
+    class Meta:
+        db_table = "target_template"
 
 # Incident Management
 class IncidentStatus(models.Model):
@@ -175,10 +153,10 @@ class IncidentCategory(models.Model):
         db_table = "incident_category"
         
 class Incident(models.Model):
-    target = models.ForeignKey(Target, on_delete=models.CASCADE, db_column="taid")
-    metric = models.ForeignKey(Metric, on_delete=models.CASCADE, db_column="mid")
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
+    metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
     incident_category = models.ForeignKey(IncidentCategory, on_delete=models.CASCADE)
-    open_date = models.DateTimeField('collect date', db_column="opendate")
+    open_date = models.DateTimeField('collect date')
     incident_sla = models.ForeignKey(IncidentSLA, on_delete=models.CASCADE, null=True) 
     incident_status = models.ForeignKey(IncidentStatus, on_delete=models.CASCADE) 
     notification_sent = models.BooleanField(null=True)
